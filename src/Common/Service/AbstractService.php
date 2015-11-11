@@ -8,6 +8,7 @@ use Buzz\Exception\RequestException;
 use OAuth\Common\Consumer\Credentials;
 use OAuth\Common\Consumer\CredentialsInterface;
 use OAuth\Common\Exception\Exception;
+use OAuth\Common\Http\Exception\UnauthorizedRequestException;
 use OAuth\Common\Http\Exception\TokenResponseException;
 use OAuth\Common\Http\Url;
 use OAuth\Common\Storage\TokenStorageInterface;
@@ -185,8 +186,19 @@ abstract class AbstractService implements ServiceInterface
         } catch (RequestException $e) {
             throw new TokenResponseException($e->getMessage() ? $e->getMessage() : 'Failed to request resource.');
         }
+        $this->assertHttpRequestAuthorized($response);
 
         return $response->getContent();
+    }
+
+	/**
+	 * {@inheritdoc}
+	 */
+    public function assertHttpRequestAuthorized($response)
+    {
+        if($response->getStatusCode() === 401) {
+            throw new UnauthorizedRequestException($response->getReasonPhrase());
+        }
     }
 
     /**
