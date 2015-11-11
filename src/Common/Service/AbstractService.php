@@ -167,6 +167,7 @@ abstract class AbstractService implements ServiceInterface
         $json = $this->request($uri, $body, $method, $extraHeaders);
         if (!is_string($json) or (
                 0 !== strpos($json, '{') and
+                0 !== strpos($json, '[') and
                 !in_array($json, ['true', 'false'])
             )
         ) {
