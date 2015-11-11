@@ -98,7 +98,7 @@ class GitHub extends LazyExtractor
     {
         $email = $this->getEmailObject($emails);
 
-        return $email[ 'email' ];
+        return (is_array($email)) ? $email[ 'email' ] : $email;
     }
 
     protected function verifiedEmailNormalizer($emails)
@@ -119,14 +119,14 @@ class GitHub extends LazyExtractor
     {
         // Try to find an email address which is primary and verified.
         foreach ($emails as $email) {
-            if ($email[ 'primary' ] && $email[ 'verified' ]) {
+            if (!empty($email[ 'primary' ]) && !empty($email[ 'verified' ])) {
                 return $email;
             }
         }
 
         // Try to find an email address which is primary.
         foreach ($emails as $email) {
-            if ($email[ 'primary' ]) {
+            if (!empty($email[ 'primary' ])) {
                 return $email;
             }
         }
