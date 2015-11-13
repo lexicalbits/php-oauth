@@ -163,6 +163,8 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
             $uri->getQuery()->modify(['oauth2_access_token' => $token->getAccessToken()]);
         } elseif (static::AUTHORIZATION_METHOD_QUERY_STRING_V3 === $this->getAuthorizationMethod()) {
             $uri->getQuery()->modify(['apikey' => $token->getAccessToken()]);
+        } elseif (static::AUTHORIZATION_METHOD_QUERY_STRING_V4 === $this->getAuthorizationMethod()) {
+            $uri->getQuery()->modify(['token' => $token->getAccessToken()]);
         } elseif (static::AUTHORIZATION_METHOD_HEADER_BEARER === $this->getAuthorizationMethod()) {
             $extraHeaders = array_merge(['Authorization' => 'Bearer ' . $token->getAccessToken()], $extraHeaders);
         }
