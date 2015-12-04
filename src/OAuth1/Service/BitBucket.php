@@ -9,9 +9,9 @@ class BitBucket extends AbstractService
 {
 
     protected $baseApiUri = 'https://bitbucket.org/api/1.0/';
-    protected $requestTokenEndpoint = 'https://bitbucket.org/!api/1.0/oauth/request_token';
-    protected $authorizationEndpoint = 'https://bitbucket.org/!api/1.0/oauth/authenticate';
-    protected $accessTokenEndpoint = 'https://bitbucket.org/!api/1.0/oauth/access_token';
+    protected $requestTokenEndpoint = 'https://bitbucket.org/api/1.0/oauth/request_token';
+    protected $authorizationEndpoint = 'https://bitbucket.org/api/1.0/oauth/authenticate';
+    protected $accessTokenEndpoint = 'https://bitbucket.org/api/1.0/oauth/access_token';
 
     /**
      * {@inheritdoc}
