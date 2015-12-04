@@ -12,6 +12,7 @@
 namespace OAuth\UserData\Extractor;
 
 use OAuth\UserData\Arguments\FieldsValues;
+use OAuth\UserData\Utils\ArrayUtils;
 
 /**
  * Class GitHub
@@ -21,7 +22,7 @@ use OAuth\UserData\Arguments\FieldsValues;
 class Asana extends LazyExtractor
 {
 
-    const REQUEST_PROFILE = '/user/me';
+    const REQUEST_PROFILE = '/users/me';
 
     public function __construct()
     {
@@ -35,6 +36,7 @@ class Asana extends LazyExtractor
                 ]
             ),
             self::getDefaultNormalizersMap()
+                ->pathContext('data')
                 ->paths(
                     [
                         self::FIELD_UNIQUE_ID   => 'id',

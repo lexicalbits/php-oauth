@@ -14,7 +14,28 @@ class Asana extends AbstractService
     protected $authorizationMethod = self::AUTHORIZATION_METHOD_QUERY_STRING;
     protected $extraOAuthHeaders = ['Accept' => 'application/json'];
     protected $extraApiHeaders = ['Accept' => 'application/json'];
-    protected $apiVersion = '1';
+    protected $apiVersion = '1.0';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthorizationUri(array $additionalParameters = [])
+    {
+        $parameters = array_merge(
+            $additionalParameters,
+            [
+                'client_id'     => $this->credentials->getConsumerId(),
+                'redirect_uri'  => $this->credentials->getCallbackUrl(),
+                'response_type' => 'code',
+            ]
+        );
+
+        // Build the url
+        $url = clone $this->getAuthorizationEndpoint();
+        $url->getQuery()->modify($parameters);
+
+        return $url;
+    }
 
     /**
      * {@inheritdoc}
@@ -24,6 +45,12 @@ class Asana extends AbstractService
         $data = json_decode($responseBody, true);
         if (null === $data || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
+        }
+        if(isset($data['error_description'])) {
+            throw new TokenResponseException($data['error_description']);
+        }
+        if(isset($data['error'])) {
+            throw new TokenResponseException($data['error']);
         }
         $token = new StdOAuth2Token();
         $token->setAccessToken($data[ 'access_token' ]);
@@ -36,6 +63,7 @@ class Asana extends AbstractService
         if (isset($data[ 'data' ])) {
             $token->setExtraParams($data['data']);
         }
+        return $token;
     }
 
     /**
@@ -47,7 +75,7 @@ class Asana extends AbstractService
             case 400:
             case 404:
             case 500:
-                throw new InvalidReqeustException($response->getReasonPhrase());
+                throw new InvalidRequestException($response->getReasonPhrase());
                 break;
             case 401:
             case 403:
