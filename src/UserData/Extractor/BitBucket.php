@@ -30,15 +30,18 @@ class BitBucket extends LazyExtractor
                 [
                     self::FIELD_USERNAME,
                     self::FIELD_FIRST_NAME,
-                    self::FIELD_LAST_NAME
+                    self::FIELD_LAST_NAME,
+                    self::FIELD_IMAGE_URL,
                 ]
             ),
             self::getDefaultNormalizersMap()
+                ->pathContext('user')
                 ->paths(
                     [
                         self::FIELD_USERNAME    => 'username',
                         self::FIELD_FIRST_NAME  => 'first_name',
                         self::FIELD_LAST_NAME   => 'last_name',
+                        self::FIELD_IMAGE_URL   => 'avatar',
                     ]
                 ),
             self::getDefaultLoadersMap()
@@ -49,70 +52,6 @@ class BitBucket extends LazyExtractor
     protected function profileLoader()
     {
         return $this->service->requestJSON(self::REQUEST_PROFILE);
-    }
-
-    protected function firstNameNormalizer()
-    {
-        $fullName = $this->getField(self::FIELD_FULL_NAME);
-        if ($fullName) {
-            $names = explode(' ', $fullName);
-
-            return $names[ 0 ];
-        }
-
-        return null;
-    }
-
-    protected function lastNameNormalizer()
-    {
-        $fullName = $this->getField(self::FIELD_FULL_NAME);
-        if ($fullName) {
-            $names = explode(' ', $fullName);
-
-            return $names[ sizeof($names) - 1 ];
-        }
-
-        return null;
-    }
-
-    protected function emailNormalizer($emails)
-    {
-        $email = $this->getEmailObject($emails);
-
-        return (is_array($email)) ? $email[ 'email' ] : $email;
-    }
-
-    protected function verifiedEmailNormalizer($emails)
-    {
-        $email = $this->getEmailObject($emails);
-
-        return $email[ 'verified' ];
-    }
-
-    /**
-     * Get the right email address from the one's the user provides.
-     *
-     * @param array $emails The array of email array objects provided by BitBucket.
-     *
-     * @return array The email array object.
-     */
-    private function getEmailObject($emails)
-    {
-        // Try to find an email address which is primary and verified.
-        foreach ($emails as $email) {
-            if (!empty($email[ 'primary' ]) && !empty($email[ 'verified' ])) {
-                return $email;
-            }
-        }
-
-        // Try to find an email address which is primary.
-        foreach ($emails as $email) {
-            if (!empty($email[ 'primary' ])) {
-                return $email;
-            }
-        }
-
-        return $emails[ 0 ];
     }
 }
 
