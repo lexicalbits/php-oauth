@@ -35,6 +35,21 @@ class Linkedin extends AbstractService
     protected $accessTokenEndpoint = 'https://www.linkedin.com/uas/oauth2/accessToken';
     protected $authorizationMethod = self::AUTHORIZATION_METHOD_QUERY_STRING_V2;
     protected $apiVersion = 'v1';
+    //protected $extraOAuthHeaders = ['state'=>'N/A'];
+    protected $stateParameterInAuthUrl = true;
+
+    public function getAuthorizationUri(array $additionalParameters = []) {
+        $uri = parent::getAuthorizationUri($additionalParameters);
+        //dd($uri);
+        //dd(get_class_methods('League\Url\Components\Query'));
+        //$uri->getQuery()->modify('state', '');
+        //dd($uri->getQuery());
+        return $uri;
+    }
+    public function needsStateParameterInAuthUrl()
+    {
+        return true;
+    }
 
     /**
      * {@inheritdoc}

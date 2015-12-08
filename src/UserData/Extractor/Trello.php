@@ -15,14 +15,14 @@ use OAuth\UserData\Arguments\FieldsValues;
 use OAuth\UserData\Utils\ArrayUtils;
 
 /**
- * Class Asana 
+ * Class Trello 
  *
  * @package OAuth\UserData\Extractor
  */
-class Asana extends LazyExtractor
+class Trello extends LazyExtractor
 {
 
-    const REQUEST_PROFILE = '/users/me';
+    const REQUEST_PROFILE = '/members/me';
 
     public function __construct()
     {
@@ -31,17 +31,19 @@ class Asana extends LazyExtractor
                 [
                     self::FIELD_UNIQUE_ID,
                     self::FIELD_USERNAME,
-                    self::FIELD_EMAIL,
-                    self::FIELD_IMAGE_URL
+                    self::FIELD_FULL_NAME,
+                    self::FIELD_FIRST_NAME,
+                    self::FIELD_LAST_NAME,
+                    self::FIELD_PROFILE_URL
                 ]
             ),
             self::getDefaultNormalizersMap()
-                ->pathContext('data')
                 ->paths(
                     [
                         self::FIELD_UNIQUE_ID   => 'id',
-                        self::FIELD_USERNAME    => 'name',
-                        self::FIELD_EMAIL       => 'email'
+                        self::FIELD_USERNAME    => 'username',
+                        self::FIELD_FULL_NAME    => 'fullName',
+                        self::FIELD_PROFILE_URL => 'url'
                     ]
                 ),
             self::getDefaultLoadersMap()
@@ -53,12 +55,29 @@ class Asana extends LazyExtractor
         return $this->service->requestJSON(self::REQUEST_PROFILE);
     }
 
-    protected function imageUrlNormalizer($images)
+    protected function firstNameNormalizer()
     {
-        if(isset($images['image128x128'])) {
-            return $images['image128x128'];
+        $fullName = $this->getField(self::FIELD_FULL_NAME);
+        if ($fullName) {
+            $names = explode(' ', $fullName);
+
+            return $names[ 0 ];
         }
+
+        return null;
+    }
+
+    protected function lastNameNormalizer()
+    {
+        $fullName = $this->getField(self::FIELD_FULL_NAME);
+        if ($fullName) {
+            $names = explode(' ', $fullName);
+
+            return $names[ sizeof($names) - 1 ];
+        }
+
         return null;
     }
 }
+
 

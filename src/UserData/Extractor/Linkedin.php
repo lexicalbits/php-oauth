@@ -82,7 +82,8 @@ class Linkedin extends LazyExtractor
             'public-profile-url'
         ];
 
-        return sprintf('/people/~:(%s)?format=json', implode(",", $fields));
+        //return sprintf('/people/~:(%s)?format=json', implode(",", $fields));
+        return '/people/~?format=json';
     }
 
     protected function profileLoader()
