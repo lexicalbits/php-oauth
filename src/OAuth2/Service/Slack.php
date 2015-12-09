@@ -11,7 +11,6 @@ class Slack extends AbstractService
     const SCOPE_CHANNELS_WRITE = 'channels:write';
     const SCOPE_CHANNELS_HISTORY = 'channels:history';
     const SCOPE_CHANNELS_READ = 'channels:read';
-    const SCOPE_CHAT_WRITE = 'chat:write';
     const SCOPE_CHAT_WRITE_BOT = 'chat:write:bot';
     const SCOPE_CHAT_WRITE_USER = 'chat:write:user';
     const SCOPE_EMOJI_READ = 'emoji:read';
