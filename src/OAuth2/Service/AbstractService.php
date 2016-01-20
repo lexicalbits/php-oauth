@@ -19,6 +19,8 @@ use OAuth\OAuth2\Service\Exception\MissingRefreshTokenException;
 abstract class AbstractService extends BaseAbstractService implements ServiceInterface
 {
 
+    static public $validateScopes = false;
+
     /** @const OAUTH_VERSION */
     const OAUTH_VERSION = 2;
     /** @var array */
@@ -58,7 +60,7 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
         $this->stateParameterInAuthUrl = $stateParameterInAuthUrl;
 
         foreach ($scopes as $scope) {
-            if (!$this->isValidScope($scope)) {
+            if (self::$validateScopes && !$this->isValidScope($scope)) {
                 throw new InvalidScopeException('Scope ' . $scope . ' is not valid for service ' . get_class($this));
             }
         }
