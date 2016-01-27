@@ -28,9 +28,7 @@ class Google extends AbstractService
     const SCOPE_BIGQUERY = 'https://www.googleapis.com/auth/bigquery';
     const SCOPE_CONTENT = 'https://www.googleapis.com/auth/content';
     const SCOPE_DOUBLECLICK = 'https://www.googleapis.com/auth/doubleclicksearch';
-    const SCOPE_APPS_ACTIVITY = 'https://www.googleapis.com/auth/activity';
     const SCOPE_COMPUTE = 'https://www.googleapis.com/auth/compute';
-    const SCOPE_MAPS_COORDINATE = 'https://www.googleapis.com/auth/coordinate';
     const SCOPE_GAMES = 'https://www.googleapis.com/auth/games';
     const SCOPE_TASKQUEUE = 'https://www.googleapis.com/auth/taskqueue';
     const SCOPE_TASKQUEUE_WORKER = 'https://www.googleapis.com/auth/taskqueue.consumer';
