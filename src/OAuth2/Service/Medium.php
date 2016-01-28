@@ -16,12 +16,12 @@ class Medium extends AbstractService
     const SCOPE_BASIC = 'basicProfile';
     const SCOPE_LIST_PUBLICATIONS = 'listPublications';
     const SCOPE_PUBLISH_POST = 'publishPost';
-    const SCOPE_UPLOAD_IMAGE = 'uploadImage';
+    //const SCOPE_UPLOAD_IMAGE = 'uploadImage'; Need extended permissions to use this
 
     protected $baseApiUri = 'https://api.medium.com/{apiVersion}/';
     protected $authorizationEndpoint = 'https://medium.com/m/oauth/authorize';
-    protected $accessTokenEndpoint = 'https://api.medium.com/{apiVersion}/v1/tokens';
-    protected $authorizationMethod = self::AUTHORIZATION_METHOD_QUERY_STRING;
+    protected $accessTokenEndpoint = 'https://api.medium.com/{apiVersion}/tokens';
+    protected $authorizationMethod = self::AUTHORIZATION_METHOD_HEADER_BEARER;
     protected $apiVersion = 'v1';
 
     /**
@@ -29,6 +29,7 @@ class Medium extends AbstractService
      */
     protected function parseAccessTokenResponse($responseBody)
     {
+        \Log::debug($responseBody);
         $data = json_decode($responseBody, true);
 
         if (null === $data || !is_array($data)) {
@@ -53,5 +54,32 @@ class Medium extends AbstractService
         $token->setExtraParams($data);
 
         return $token;
+    }
+    
+    public function getAuthorizationUri(array $additionalParameters = [])
+    {
+        $parameters = array_merge(
+            [
+                'client_id'     => $this->credentials->getConsumerId(),
+                'redirect_uri'  => $this->credentials->getCallbackUrl(),
+                'response_type' => 'code',
+            ],
+            $additionalParameters
+        );
+
+        //Medium loooks for comma-separated scopes
+        $parameters[ 'scope' ] = implode(',', $this->scopes);
+
+        //While we're here, might as well always include "state"...
+        if (!isset($parameters[ 'state' ])) {
+            $parameters[ 'state' ] = $this->generateAuthorizationState();
+        }
+        $this->storeAuthorizationState($parameters[ 'state' ]);
+
+        // Build the url
+        $url = clone $this->getAuthorizationEndpoint();
+        $url->getQuery()->modify($parameters);
+
+        return $url;
     }
 }

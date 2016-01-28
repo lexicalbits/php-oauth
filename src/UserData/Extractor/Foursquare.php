@@ -45,6 +45,7 @@ class Foursquare extends LazyExtractor
                 ]
             ),
             self::getDefaultNormalizersMap()
+                ->pathContext('response.user')
                 ->paths(
                     [
                         self::FIELD_UNIQUE_ID   => 'id',
@@ -61,6 +62,16 @@ class Foursquare extends LazyExtractor
     protected function profileLoader()
     {
         return $this->service->requestJSON(self::REQUEST_PROFILE);
+    }
+    protected function imageUrlNormalizer($response) {
+        if(isset($response['response'])
+            && isset($response['response']['user'])
+            && isset($response['response']['user']['photo'])
+        ) {
+            $data = $response['response']['user']['photo'];
+            return implode('', [$data['prefix'], 'original', $data['suffix']]);
+        }
+        return null;
     }
 }
 
