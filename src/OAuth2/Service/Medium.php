@@ -29,7 +29,6 @@ class Medium extends AbstractService
      */
     protected function parseAccessTokenResponse($responseBody)
     {
-        \Log::debug($responseBody);
         $data = json_decode($responseBody, true);
 
         if (null === $data || !is_array($data)) {
