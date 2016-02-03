@@ -5,6 +5,7 @@ namespace OAuth\OAuth2\Service;
 use OAuth\Common\Http\Exception\TokenResponseException;
 use OAuth\OAuth2\Service\Exception\InvalidAccessTypeException;
 use OAuth\OAuth2\Token\StdOAuth2Token;
+use OAuth\Common\Storage\Exception\TokenNotFoundException;
 
 class Google extends AbstractService
 {
@@ -56,7 +57,11 @@ class Google extends AbstractService
     public function getAuthorizationEndpoint()
     {
         $uri = parent::getAuthorizationEndpoint();
-        $uri->getQuery()->modify(['access_type' => $this->accessType]);
+        $uri->getQuery()->modify([
+            'access_type' => $this->accessType,
+            //http://stackoverflow.com/a/10857806 So we always get a refresh token
+            'prompt' => 'consent'
+        ]);
 
         return $uri;
     }
@@ -74,7 +79,12 @@ class Google extends AbstractService
             throw new TokenResponseException('Error in retrieving token: "' . $data[ 'error' ] . '"');
         }
 
-        $token = new StdOAuth2Token();
+        //Re-use a token if possible, since we might not have a new refresh token to use
+        try {
+            $token = $this->getAccessToken();
+        } catch(TokenNotFoundException $tnfe) {
+            $token = new StdOAuth2Token();
+        }
         $token->setAccessToken($data[ 'access_token' ]);
         $token->setLifetime($data[ 'expires_in' ]);
 
