@@ -122,8 +122,12 @@ abstract class AbstractToken implements TokenInterface
 
     public function isExpired()
     {
+        //Let the parent app allocate some breathing room to the refresh process
+        //  in case the use of the token will happen significantly later than the
+        //  refresh of the token.
+        $buffer = getenv('OAUTH_LIFETIME_BUFFER') || 0;
         return ($this->getEndOfLife() !== TokenInterface::EOL_NEVER_EXPIRES
             && $this->getEndOfLife() !== TokenInterface::EOL_UNKNOWN
-            && time() > $this->getEndOfLife());
+            && time() > ($this->getEndOfLife() - intval($buffer)));
     }
 }
