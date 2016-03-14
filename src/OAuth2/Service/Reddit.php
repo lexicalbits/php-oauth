@@ -49,7 +49,11 @@ class Reddit extends AbstractService
             throw new TokenResponseException('Error in retrieving token: "' . $data[ 'error' ] . '"');
         }
 
-        $token = new StdOAuth2Token();
+        try {
+            $token = $this->getAccessToken();
+        } catch(TokenNotFoundException $tnfe) {
+            $token = new StdOAuth2Token();
+        }
         $token->setAccessToken($data[ 'access_token' ]);
         $token->setLifeTime($data[ 'expires_in' ]);
 
