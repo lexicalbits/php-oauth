@@ -52,7 +52,12 @@ class Asana extends AbstractService
         if(isset($data['error'])) {
             throw new TokenResponseException($data['error']);
         }
-        $token = new StdOAuth2Token();
+        try {
+            $token = $this->getAccessToken();
+            if(!$token) $token = new StdOAuth2Token();
+        } catch(TokenNotFoundException $tnfe) {
+            $token = new StdOAuth2Token();
+        }
         $token->setAccessToken($data[ 'access_token' ]);
         if (isset($data[ 'expires_in' ])) {
             $token->setLifeTime($data[ 'expires_in' ]);
