@@ -51,6 +51,7 @@ class Reddit extends AbstractService
 
         try {
             $token = $this->getAccessToken();
+            if(!$token) $token = new StdOAuth2Token();
         } catch(TokenNotFoundException $tnfe) {
             $token = new StdOAuth2Token();
         }
@@ -79,6 +80,7 @@ class Reddit extends AbstractService
             array_merge(
                 [
                     'state' => $state
+                    , 'duration' => 'permanent'
                 ],
                 $additionalParameters
             )
