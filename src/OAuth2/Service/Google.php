@@ -82,6 +82,7 @@ class Google extends AbstractService
         //Re-use a token if possible, since we might not have a new refresh token to use
         try {
             $token = $this->getAccessToken();
+            if(!$token) $token = new StdOAuth2Token();
         } catch(TokenNotFoundException $tnfe) {
             $token = new StdOAuth2Token();
         }
