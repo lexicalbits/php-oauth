@@ -4,6 +4,7 @@ namespace OAuth\OAuth2\Service;
 
 use OAuth\Common\Http\Exception\InvalidRequestException;
 use OAuth\Common\Http\Exception\TokenResponseException;
+use OAuth\Common\Storage\Exception\TokenNotFoundException;
 use OAuth\OAuth2\Token\StdOAuth2Token;
 
 class Asana extends AbstractService
